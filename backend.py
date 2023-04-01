@@ -162,9 +162,8 @@ def create_plot_tickers(tickers: List[Ticker], syms: List[str], types:List[str])
     ax2  = plt.figure(2,figsize=(10, 8)).gca()
     ax3  = plt.figure(3,figsize=(10, 8)).gca()
     ax4  = plt.figure(4,figsize=(10, 8)).gca()
-    if inv_type == "Stock" or inv_type == "REIT":
-        fig5 = plt.figure(5,figsize=(10, 8))
-        ax5  = fig5.gca()
+    fig5 = plt.figure(5,figsize=(10, 8))
+    ax5  = fig5.gca()
     ax6  = plt.figure(6,figsize=(10, 8)).gca()
     ax7  = plt.figure(7,figsize=(10, 8)).gca()
 
@@ -172,7 +171,7 @@ def create_plot_tickers(tickers: List[Ticker], syms: List[str], types:List[str])
     all_dividends = pd.concat(all_dividends, axis=1, keys=syms).fillna(0)
     all_stock_peRatio = pd.concat(all_stock_peRatio, axis=1, keys=syms).fillna(method='ffill').fillna(method='bfill')
     all_total_return = pd.concat(all_total_return, axis=1, keys=syms).fillna(method='ffill').fillna(method='bfill')*100
-    if inv_type == "Stock" or inv_type == "REIT": corr_mat = all_stock_prices.corr()
+    corr_mat = (all_stock_prices.corr()*100).round(2)
     all_annual_yields = pd.DataFrame(((all_stock_prices.iloc[12::12].to_numpy()/all_stock_prices.iloc[:-12:12].to_numpy())-1)*100,
                                      columns=all_stock_prices.columns, index=all_stock_prices.iloc[12::12].index)
     all_annual_volatility = pd.DataFrame([(all_stock_prices.iloc[it*12:(it+1)*12].std().to_numpy()/all_stock_prices.iloc[(it+1)*12].to_numpy())*100 for it in range((len(all_stock_prices)//12))],
@@ -182,9 +181,16 @@ def create_plot_tickers(tickers: List[Ticker], syms: List[str], types:List[str])
     all_dividends.plot.bar(ax=ax2,stacked=True)
     all_stock_peRatio.plot.line(ax=ax3)
     all_total_return.plot.line(ax=ax4)
-    if inv_type == "Stock" or inv_type == "REIT":
-        sm.graphics.plot_corr(corr_mat,xnames=all_stock_prices.columns,ax=ax5,normcolor=(0,1),cmap=cm.get_cmap('jet'))
-        fig5.colorbar(cm.ScalarMappable(norm=Normalize(vmin=0,vmax=1), cmap=cm.get_cmap('jet')), ax=ax5)
+    ax5.imshow(corr_mat,cmap=cm.get_cmap('jet'),norm=Normalize(vmin=-100,vmax=100))
+    for i,col in enumerate(corr_mat.columns): 
+        for j,row in enumerate(corr_mat.index):
+            if -50<corr_mat[col].loc[row]<50:
+                ax5.text(j, i, corr_mat[col].loc[row], ha="center", va="center", color="k")
+            else:
+                ax5.text(j, i, corr_mat[col].loc[row], ha="center", va="center", color="w")
+    ax5.set_xticks([*range(len(corr_mat.index))],labels=corr_mat.index)
+    ax5.set_yticks([*range(len(corr_mat.columns))],labels=corr_mat.columns)
+    fig5.colorbar(cm.ScalarMappable(norm=Normalize(vmin=-100,vmax=100), cmap=cm.get_cmap('jet')), ax=ax5)
     all_annual_yields.plot.line(ax=ax6)
     all_annual_volatility.plot.line(ax=ax7)
 
@@ -192,7 +198,7 @@ def create_plot_tickers(tickers: List[Ticker], syms: List[str], types:List[str])
     ax2.set_ylabel('Dividends in $')
     ax3.set_ylabel('P/E-Ratio')
     ax4.set_ylabel('Total Return in %')
-    if inv_type == "Stock" or inv_type == "REIT": ax5.set_title('Correlation of Tickers')
+    ax5.set_title('Price Correlation of Tickers')
     ax6.set_ylabel('Annual Yield in %')
     ax7.set_ylabel('Annual Volatility in %')
 
@@ -209,49 +215,43 @@ def create_plot_tickers(tickers: List[Ticker], syms: List[str], types:List[str])
 
 
 def etf_pos_corr_plot(t10hold: List[pd.DataFrame], syms: List[str]):
+    # extract all 10 major holding positions Symbols and Percentage of ETF/fund
     SYM_DF = pd.concat([pd.DataFrame(hold.T["SYM"].to_numpy(),columns=[sym]).T for sym,hold in zip(syms,t10hold)]).T
     ASSETS_DF = pd.concat([pd.DataFrame(hold.T["Assets"].to_numpy(),columns=[sym]).T for sym,hold in zip(syms,t10hold)]).T
+
+    # generate correlation matrix to see the overlap of the positions weighted by their fund impact 
     Corr_Mat = pd.DataFrame()
     for sym in syms:
-        col = dict()
+        row = dict()
         total = np.sum(ASSETS_DF[sym].to_numpy())
         for o_sym in syms:
             num = 0
             for ticker,perc in zip(SYM_DF[sym].to_list(),ASSETS_DF[sym].to_list()): 
                 if ticker in SYM_DF[o_sym].to_list(): 
-                    num += total/perc
-            col[o_sym] = num/total
-        Corr_Mat[sym] = pd.Series(col)
+                    num += perc
+            row[o_sym] = num/total
+        Corr_Mat[sym] = (pd.Series(row)*100).round(2)
+
+    # Plot Corr_Mat
+    # -> row in plot are overlap percentages for 10 major holdings
     plt.figure(1,figsize=(10, 8))
-    plt.imshow(Corr_Mat,cmap=cm.get_cmap('jet'),norm=Normalize(vmin=0,vmax=1))
-    plt.colorbar(cm.ScalarMappable(norm=Normalize(vmin=0,vmax=1), cmap=cm.get_cmap('jet')))
+    plt.imshow(Corr_Mat,cmap=cm.get_cmap('jet'),norm=Normalize(vmin=0,vmax=100))
+    for i in range(len(syms)): 
+        for j in range(len(syms)):
+            if 25<Corr_Mat[syms[i]].loc[syms[j]]<75:
+                plt.text(j, i, Corr_Mat[syms[i]].loc[syms[j]], ha="center", va="center", color="k")
+            else:
+                plt.text(j, i, Corr_Mat[syms[i]].loc[syms[j]], ha="center", va="center", color="w")
+    plt.colorbar(cm.ScalarMappable(norm=Normalize(vmin=0,vmax=100), cmap=cm.get_cmap('jet')))
     plt.title("Correlation Matrix of ETFs\nTop 10 Holdings")
+    plt.xlabel("Comparators")
+    plt.ylabel("Fixed ETFs")
     plt.xlim((-0.5,len(syms)-1+0.5))
     plt.ylim((-0.5,len(syms)-1+0.5))
-    plt.gca().set_xticks([num-0.5 for num in [*range(len(syms))]],minor=True,visible=False)
-    plt.gca().set_yticks([num-0.5 for num in [*range(len(syms))]],minor=True,visible=False)
-    plt.gca().set_xticks([*range(len(syms))],labels=syms)
-    plt.gca().set_yticks([*range(len(syms))],labels=syms)
-    plt.gca().grid(which='minor',c='k',lw=3.0)
+    ax = plt.gca()
+    ax.set_xticks([num-0.5 for num in [*range(len(syms))]],minor=True,visible=False)
+    ax.set_yticks([num-0.5 for num in [*range(len(syms))]],minor=True,visible=False)
+    ax.set_xticks([*range(len(syms))],labels=syms)
+    ax.set_yticks([*range(len(syms))],labels=syms)
+    ax.grid(which='minor',c='k',lw=3.0)
     plt.show()
-
- # old code 
- # simple yearly linear_regressor
-    #X = df['Close'].iloc[:-12].to_numpy().reshape(-1, 1)  # use all but the last year as training data
-    #y = df['Close'].iloc[12:].to_numpy()   # use all but the first year as target data
-    #year_model = LinearRegression()
-    #year_model.fit(X, y)
-    #future_index = pd.date_range(date.today(), periods=12, freq='M')
-    #future_year_preds = pd.DataFrame({'Date': future_index, 'Close': [year_model.predict(price.reshape(1, -1))[0] \
-    #                                    for price in df['Close'].iloc[-12:].to_numpy()]}).set_index('Date')
-    #monthly_close = pd.concat([df['Close'], future_year_preds['Close']])
-    
-    # Grab the dividends for each ticker
-    #X = df['Dividends'].iloc[:-12].to_numpy().reshape(-1, 1)  # use all but the last year as training data
-    #y = df['Dividends'].iloc[12:].to_numpy()   # use all but the first year as target data
-    #year_model = LinearRegression()
-    #year_model.fit(X, y)
-    #future_index = pd.date_range(date.today(), periods=12, freq='M')
-    #future_year_preds = pd.DataFrame({'Date': future_index, 'Dividends': [year_model.predict(price.reshape(1, -1))[0] \
-    #                                    for price in df['Dividends'].iloc[-12:].to_numpy()]}).set_index('Date')
-    #dividends = pd.concat([df['Dividends'], future_year_preds['Dividends']])  
