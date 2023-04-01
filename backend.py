@@ -175,8 +175,8 @@ def create_plot_tickers(tickers: List[Ticker], syms: List[str], types:List[str])
     if inv_type == "Stock" or inv_type == "REIT": corr_mat = all_stock_prices.corr()
     all_annual_yields = pd.DataFrame(((all_stock_prices.iloc[12::12].to_numpy()/all_stock_prices.iloc[:-12:12].to_numpy())-1)*100,
                                      columns=all_stock_prices.columns, index=all_stock_prices.iloc[12::12].index)
-    all_annual_volatility = pd.DataFrame([(all_stock_prices.iloc[it*12:(it+1)*12].std().to_numpy()/all_stock_prices.iloc[(it+1)*12].to_numpy())*100 for it in range((len(all_stock_prices)//12)-1)],
-                                     columns=all_stock_prices.columns, index=(all_stock_prices.iloc[12::12]).iloc[:(len(all_stock_prices)//12)-1].index)
+    all_annual_volatility = pd.DataFrame([(all_stock_prices.iloc[it*12:(it+1)*12].std().to_numpy()/all_stock_prices.iloc[(it+1)*12].to_numpy())*100 for it in range((len(all_stock_prices)//12))],
+                                     columns=all_stock_prices.columns, index=(all_stock_prices.iloc[12::12]).iloc[:(len(all_stock_prices)//12)].index)
 
     all_stock_prices.plot.line(ax=ax1)
     all_dividends.plot.bar(ax=ax2,stacked=True)
@@ -208,6 +208,32 @@ def create_plot_tickers(tickers: List[Ticker], syms: List[str], types:List[str])
     plt.show()
 
 
+def etf_pos_corr_plot(t10hold: List[pd.DataFrame], syms: List[str]):
+    SYM_DF = pd.concat([pd.DataFrame(hold.T["SYM"].to_numpy(),columns=[sym]).T for sym,hold in zip(syms,t10hold)]).T
+    ASSETS_DF = pd.concat([pd.DataFrame(hold.T["Assets"].to_numpy(),columns=[sym]).T for sym,hold in zip(syms,t10hold)]).T
+    Corr_Mat = pd.DataFrame()
+    for sym in syms:
+        col = dict()
+        total = np.sum(ASSETS_DF[sym].to_numpy())
+        for o_sym in syms:
+            num = 0
+            for ticker,perc in zip(SYM_DF[sym].to_list(),ASSETS_DF[sym].to_list()): 
+                if ticker in SYM_DF[o_sym].to_list(): 
+                    num += total/perc
+            col[o_sym] = num/total
+        Corr_Mat[sym] = pd.Series(col)
+    plt.figure(1,figsize=(10, 8))
+    plt.imshow(Corr_Mat,cmap=cm.get_cmap('jet'),norm=Normalize(vmin=0,vmax=1))
+    plt.colorbar(cm.ScalarMappable(norm=Normalize(vmin=0,vmax=1), cmap=cm.get_cmap('jet')))
+    plt.title("Correlation Matrix of ETFs\nTop 10 Holdings")
+    plt.xlim((-0.5,len(syms)-1+0.5))
+    plt.ylim((-0.5,len(syms)-1+0.5))
+    plt.gca().set_xticks([num-0.5 for num in [*range(len(syms))]],minor=True,visible=False)
+    plt.gca().set_yticks([num-0.5 for num in [*range(len(syms))]],minor=True,visible=False)
+    plt.gca().set_xticks([*range(len(syms))],labels=syms)
+    plt.gca().set_yticks([*range(len(syms))],labels=syms)
+    plt.gca().grid(which='minor',c='k',lw=3.0)
+    plt.show()
 
  # old code 
  # simple yearly linear_regressor
