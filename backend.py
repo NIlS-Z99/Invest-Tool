@@ -214,7 +214,7 @@ def create_plot_tickers(tickers: List[Ticker], syms: List[str], types:List[str])
     plt.show()
 
 
-def etf_pos_corr_plot(t10hold: List[pd.DataFrame], syms: List[str]):
+def etf_pos_overlap_plot(t10hold: List[pd.DataFrame], syms: List[str]):
     # extract all 10 major holding positions Symbols and Percentage of ETF/fund
     SYM_DF = pd.concat([pd.DataFrame(hold.T["SYM"].to_numpy(),columns=[sym]).T for sym,hold in zip(syms,t10hold)]).T
     ASSETS_DF = pd.concat([pd.DataFrame(hold.T["Assets"].to_numpy(),columns=[sym]).T for sym,hold in zip(syms,t10hold)]).T
@@ -243,7 +243,7 @@ def etf_pos_corr_plot(t10hold: List[pd.DataFrame], syms: List[str]):
             else:
                 plt.text(j, i, Corr_Mat[syms[i]].loc[syms[j]], ha="center", va="center", color="w")
     plt.colorbar(cm.ScalarMappable(norm=Normalize(vmin=0,vmax=100), cmap=cm.get_cmap('jet')))
-    plt.title("Correlation Matrix of ETFs\nTop 10 Holdings")
+    plt.title("Overlap Matrix of ETFs\nTop 10 Holdings")
     plt.xlabel("Comparators")
     plt.ylabel("Fixed ETFs")
     plt.xlim((-0.5,len(syms)-1+0.5))
