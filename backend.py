@@ -174,8 +174,8 @@ def create_plot_tickers(tickers: List[Ticker], syms: List[str], types:List[str])
     corr_mat = (all_stock_prices.corr()*100).round(2)
     all_annual_yields = pd.DataFrame(((all_stock_prices.iloc[12::12].to_numpy()/all_stock_prices.iloc[:-12:12].to_numpy())-1)*100,
                                      columns=all_stock_prices.columns, index=all_stock_prices.iloc[12::12].index)
-    all_annual_volatility = pd.DataFrame([(all_stock_prices.iloc[it*12:(it+1)*12].std().to_numpy()/all_stock_prices.iloc[(it+1)*12].to_numpy())*100 for it in range((len(all_stock_prices)//12))],
-                                     columns=all_stock_prices.columns, index=(all_stock_prices.iloc[12::12]).iloc[:(len(all_stock_prices)//12)].index)
+    all_annual_volatility = pd.DataFrame([(all_stock_prices.iloc[it*12:(it+1)*12].std().to_numpy()/all_stock_prices.iloc[(it+1)*12].to_numpy())*100 for it in range(((len(all_stock_prices)-1)//12))],
+                                     columns=all_stock_prices.columns, index=(all_stock_prices.iloc[12::12]).iloc[:((len(all_stock_prices)-1)//12)].index)
 
     all_stock_prices.plot.line(ax=ax1)
     all_dividends.plot.bar(ax=ax2,stacked=True)
