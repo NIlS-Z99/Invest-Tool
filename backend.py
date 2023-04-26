@@ -234,7 +234,7 @@ def etf_pos_overlap_plot(t10hold: List[pd.DataFrame], syms: List[str]):
 
     # Plot Corr_Mat
     # -> row in plot are overlap percentages for 10 major holdings
-    plt.figure(1,figsize=(10, 8))
+    plt.figure(1,figsize=(14, 10))
     plt.imshow(Corr_Mat,cmap=cm.get_cmap('jet'),norm=Normalize(vmin=0,vmax=100))
     for i in range(len(syms)): 
         for j in range(len(syms)):
