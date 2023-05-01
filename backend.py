@@ -37,6 +37,7 @@ def three_layer_linear_regressor(series: pd.Series, tag:str, timings: List[int] 
              for idx in range(len(series)-timing)])  # use all but the last timeframe as training data                
         for it in range(repeat):  
             model = LinearRegression()
+            model.coef_ = np.random.random((X.shape))
             model.fit(X, y)
             model_zoo.append(model)
 
@@ -184,7 +185,7 @@ def create_plot_tickers(tickers: List[Ticker], syms: List[str], types:List[str])
     ax5.imshow(corr_mat,cmap=cm.get_cmap('jet'),norm=Normalize(vmin=-100,vmax=100))
     for i,col in enumerate(corr_mat.columns): 
         for j,row in enumerate(corr_mat.index):
-            if -50<corr_mat[col].loc[row]<50:
+            if -50<corr_mat[col].loc[row]<90:
                 ax5.text(j, i, corr_mat[col].loc[row], ha="center", va="center", color="k")
             else:
                 ax5.text(j, i, corr_mat[col].loc[row], ha="center", va="center", color="w")
