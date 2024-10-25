@@ -88,6 +88,7 @@ def check_signals(sp500_data, vix_data, vix_thresh, sma_period):
     below_sma200 = latest_price < latest_sma200
     below_sma150 = latest_price < latest_sma150
     below_smaq = latest_price < latest_smaq
+    above_smaq = latest_price > latest_smaq
     below_sma50 = latest_price < latest_sma50
     below_sma = [latest_price < latest_sma for latest_sma in latest_smas]
     
@@ -108,6 +109,8 @@ def check_signals(sp500_data, vix_data, vix_thresh, sma_period):
         print("Attention: S&P 500 is below SMA for ",np.array(latest_sma_keys)[below_sma]," Consider reducing leveraged position!")
     else:
         print("Market conditions are stable. No immediate action needed.")
+    print("\n")
+    if above_smaq and below_sma50 and not(high_volatility): print("If previously below SMAq consider adding to your leverage position!")
     print("\n")
 
 def plot_scraped_data(sp500_data, vix_data, vix_thresh, sma_period):
