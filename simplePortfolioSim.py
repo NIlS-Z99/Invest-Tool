@@ -22,7 +22,7 @@ print("Portfolio Allocations:",[round(p/sum(pos)*100,2) for p in pos])
 ## Simulation Parameters
 years = 35  # amount of years you expect to execute savingsplan
 tax = 26    # in % contains other reductions as well not just tax
-taxFreeGain = 12000 # in currency
+taxFreeGain = 1200  # in currency
 monthlySavingsRate = 1500  # in currency
 save_alloc = np.array([24.0,10.0,10.0,10.0, 8.0, 7.5, 6.0, 5.0, 6.0, 5.0, 2.5, 2.5, 2, 1.5])/100
 realisticGrowth = np.array([8,6.5,5,11.5,10,6,7.5,4.5,6.5,7,6,5.5,4,7]) # real 7.4 -> potential pes/bear avg 5.5
