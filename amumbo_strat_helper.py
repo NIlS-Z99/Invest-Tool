@@ -134,6 +134,7 @@ def plot_scraped_data(sp500_data, vix_data, vix_thresh, sma_period):
     count = 0
     for sma in sp500_data.columns: #.get_level_values('Price'):
         if 'SMA' in sma: 
+            print(sma, "=>", sp500_data[sma])
             ax1.plot(sp500_data.index, sp500_data[sma], label=f'S&P 500 {sma}', color=SP500_SMA_COLORS[count], 
                      linestyle='solid' if '200' in sma else ('dashed' if (str(sma_period) in sma) or \
                                        ('150' in sma) else 'dotted'))
