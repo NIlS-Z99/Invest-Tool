@@ -33,10 +33,10 @@ def get_sp500_data():
     sp500 = yf.download('^GSPC', period='2y', interval='1d')
     return sp500
 
-# Function to get S&P 500 data
+# Function to get Amumbo data
 def get_amumbo_data():
-    sp500 = yf.download('18MF.DE', period='2y', interval='1d')
-    return sp500
+    amumbo = yf.download('18MF.DE', period='2y', interval='1d')
+    return amumbo
 
 # Function to calculate Simple Moving Average
 def calculate_sma(data, smaPeriod):
@@ -63,7 +63,7 @@ def check_signals(sp500_data, amumbo_data, vix_data, vix_thresh, sma_period):
     latest_vix_m75_14 = vix_data['M75_14'].iloc[-1].tolist()
     latest_vix_m75_30 = vix_data['M75_30'].iloc[-1].tolist()
     
-    '''SP500 Routine'''
+    '''S&P 500 Routine'''
     # Calculate SMA200 for S&P 500
     sp500_data = calculate_sma200(sp500_data)
 
@@ -155,17 +155,15 @@ def check_signals(sp500_data, amumbo_data, vix_data, vix_thresh, sma_period):
     elif below_sp500_sma200:
         print("WARNING: S&P 500 is below SMA200. Market trend is too bearish. Sell the Amundi Leveraged ETF completely!")
     elif below_sp500_sma150:
-        print("WARNING: S&P 500 is below SMA150. Market trend is very bearish. Move 50% or at least Gains into ACWI IMI!")
+        print("WARNING: S&P 500 is below SMA150. Market trend is very bearish. Move 50% or at least Gains into Global All-Cap ESG!")
     elif below_sp500_smaq:
-        print("WARNING: S&P 500 is below SMAq. Market trend is bearish. Move 25% or at least 50% Gains into ACWI IMI!")
+        print("WARNING: S&P 500 is below SMAq. Market trend is bearish. Move 25% or at least 50% Gains into USA ESG!")
     elif below_sp500_sma50:
         print("WARNING: S&P 500 is below SMA50. Market trend is slightly bearish. Stop saving plan!")    
     elif True in below_sp500_sma:
         print("Attention: S&P 500 is below SMA for ",np.array(latest_sp500_sma_keys)[below_sp500_sma]," Consider reducing leveraged position!")
     elif high_volatility and below_amumbo_sma200:
         print("WARNING: High volatility and Amumbo below SMA200. Sell the Amundi Leveraged ETF completely!")
-    elif high_volatility:
-        print("WARNING: High volatility detected. Stop saving plan! Reduce exposure to leveraged products!")
     elif below_amumbo_sma200:
         print("WARNING: Amumbo is below SMA200. Market trend is too bearish. Sell the Amundi Leveraged ETF completely!")
     elif below_amumbo_sma150:
