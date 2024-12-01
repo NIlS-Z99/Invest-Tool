@@ -89,17 +89,17 @@ def check_signals(nxd100_data, qyld_data, vnx_data, vnx_thresh, sma_period):
             elif '50' in sma: latest_nxd100_sma50 = nxd100_data[sma].iloc[-1].tolist()
     
     '''QYLD Routine'''
-    # Calculate SMA200 for AMUMBO
+    # Calculate SMA200 for QYLD
     qyld_data = calculate_sma200(qyld_data)
 
-    # Calculate 1 month, 3 month, 1 year and 150 SMA for AMUMBO
+    # Calculate 1 month, 3 month, 1 year and 150 SMA for QYLD
     qyld_data = calculate_sma(qyld_data, sma_period)
     qyld_data = calculate_sma(qyld_data, 31)  # month sma support
     qyld_data = calculate_sma(qyld_data, 92)  # quarter sma support
     qyld_data = calculate_sma(qyld_data, 150) # three quater 200sma support
     qyld_data = calculate_sma(qyld_data, 365) # year sma support
     
-    # Latest AMUMBO price and SMA500
+    # Latest QYLD price and SMA500
     latest_qyld_price = qyld_data['Close'].iloc[-1].tolist() #[0]
     latest_qyld_sma200 = qyld_data['SMA200'].iloc[-1].tolist()
 
@@ -113,22 +113,22 @@ def check_signals(nxd100_data, qyld_data, vnx_data, vnx_thresh, sma_period):
             elif '92' in sma: latest_qyld_smaq = qyld_data[sma].iloc[-1].tolist()
             elif '50' in sma: latest_qyld_sma50 = qyld_data[sma].iloc[-1].tolist()
     
-    print("\n\n{:34s} {:>9.4f}\n".format("Latest VNX:",round(latest_vnx,4)))
-    print("{:34s} {:>9.4f}".format("Latest VNX M75 Week Diff:",round(vnx_thresh-latest_vnx_m75_7,4)))
-    print("{:34s} {:>9.4f}".format("Latest VNX M75 Month Diff:",round(vnx_thresh-latest_vnx_m75_7,4)))
-    print("-"*41)
-    print("{:34s} {:>9.4f}".format("Latest Nasdaq 100 Price:",round(latest_nxd100_price,4)))
-    print("{:34s} {:>9.4f}\n".format("Latest Nasdaq 100 SMA200:",round(latest_nxd100_sma200,4)))
-    print("{:34s} {:>9.4f}".format("Latest Nasdaq 100 SMA50 Diff:",round(latest_nxd100_price-latest_nxd100_sma50,4)))
-    print("{:34s} {:>9.4f}".format("Latest Nasdaq 100 SMA Quarter Diff:",round(latest_nxd100_price-latest_nxd100_smaq,4)))
-    print("{:34s} {:>9.4f}".format("Latest Nasdaq 100 SMA150 Diff:",round(latest_nxd100_price-latest_nxd100_sma150,4)))
-    print("-"*41)
-    print("-"*41)
-    print("{:34s} {:>9.4f}".format("Latest QYLD Price:",round(latest_qyld_price,4)))
-    print("{:34s} {:>9.4f}\n".format("Latest QYLD SMA200:",round(latest_qyld_sma200,4)))
-    print("{:34s} {:>9.4f}".format("Latest QYLD SMA50 Diff:",round(latest_qyld_price-latest_qyld_sma50,4)))
-    print("{:34s} {:>9.4f}".format("Latest QYLD SMA Quarter Diff:",round(latest_qyld_price-latest_qyld_smaq,4)))
-    print("{:34s} {:>9.4f}\n\n".format("Latest QYLD SMA150 Diff:",round(latest_qyld_price-latest_qyld_sma150,4)))
+    print("\n\n{:37s} {:>10.4f}\n".format("Latest VNX:",round(latest_vnx,4)))
+    print("{:37s} {:>10.4f}".format("Latest VNX M75 Week Diff:",round(vnx_thresh-latest_vnx_m75_7,4)))
+    print("{:37s} {:>10.4f}".format("Latest VNX M75 Month Diff:",round(vnx_thresh-latest_vnx_m75_7,4)))
+    print("-"*48)
+    print("{:37s} {:>10.4f}".format("Latest Nasdaq 100 Price:",round(latest_nxd100_price,4)))
+    print("{:37s} {:>10.4f}\n".format("Latest Nasdaq 100 SMA200:",round(latest_nxd100_sma200,4)))
+    print("{:37s} {:>10.4f}".format("Latest Nasdaq 100 SMA50 Diff:",round(latest_nxd100_price-latest_nxd100_sma50,4)))
+    print("{:37s} {:>10.4f}".format("Latest Nasdaq 100 SMA Quarter Diff:",round(latest_nxd100_price-latest_nxd100_smaq,4)))
+    print("{:37s} {:>10.4f}".format("Latest Nasdaq 100 SMA150 Diff:",round(latest_nxd100_price-latest_nxd100_sma150,4)))
+    print("-"*48)
+    print("-"*48)
+    print("{:37s} {:>10.4f}".format("Latest QYLD Price:",round(latest_qyld_price,4)))
+    print("{:37s} {:>10.4f}\n".format("Latest QYLD SMA200:",round(latest_qyld_sma200,4)))
+    print("{:37s} {:>10.4f}".format("Latest QYLD SMA50 Diff:",round(latest_qyld_price-latest_qyld_sma50,4)))
+    print("{:37s} {:>10.4f}".format("Latest QYLD SMA Quarter Diff:",round(latest_qyld_price-latest_qyld_smaq,4)))
+    print("{:37s} {:>10.4f}\n\n".format("Latest QYLD SMA150 Diff:",round(latest_qyld_price-latest_qyld_sma150,4)))
     
     
     # Conditions
@@ -181,14 +181,14 @@ def check_signals(nxd100_data, qyld_data, vnx_data, vnx_thresh, sma_period):
     elif above_qyld_smaq and below_qyld_sma50 and not(high_volatility): print("If previously below Nasdaq 100 SMAq consider adding to your covered call position!")
     print("\n")
 
-def plot_scraped_data(ticker_data, vnx_data, vnx_thresh, sma_period, ticker_name): # ticker="^GSPC"):
+def plot_scraped_data(ticker_data, vnx_data, vnx_thresh, sma_period, ticker_name): # ticker="^NDX"):
     # Plotting
     fig, ax1 = plt.subplots(figsize=(14, 7))
 
     # Plot Ticker and its SMA200 on the same plot
     ax1.plot(ticker_data.index, ticker_data['Close'], label=f'{ticker_name} Close', color='blue', alpha=0.6)
-    adjust_factor = int(((min(ticker_data['Close'])*0.1)//500 + 1)*500 if (min(ticker_data['Close'])*0.1)>100 else (
-        ((min(ticker_data['Close'])*0.1)//50 + 1)*50 if (min(ticker_data['Close'])*0.1)>10 else ((min(ticker_data['Close'])*0.1)//5 + 1)*5))
+    adjust_factor = int(((min(ticker_data['Close'])*0.1)//250 + 1)*250 if (min(ticker_data['Close'])*0.1)>100 else (
+        ((min(ticker_data['Close'])*0.1)//25 + 1)*25 if (min(ticker_data['Close'])*0.1)>10 else ((min(ticker_data['Close'])*0.1)//2.5 + 1)*2.5))
     scale = np.array(range(int(adjust_factor*round(min(ticker_data['Close'])/adjust_factor))-adjust_factor, int(max(ticker_data['Close']))+adjust_factor, adjust_factor))
     ax1.fill_between(ticker_data.index, np.zeros_like(ticker_data['Close'])+min(scale), ticker_data['Close'],
                      #np.zeros_like(ticker_data['Close',ticker])+min(ticker_data['Close',ticker]), 
@@ -216,7 +216,7 @@ def plot_scraped_data(ticker_data, vnx_data, vnx_thresh, sma_period, ticker_name
             ax2.plot(vnx_data.index, vnx_data[m75], label=f'VNX {m75}', color=VNX_M75_COLORS[count], linestyle='--')
             count += 1
     ax2.axhline(y=vnx_thresh, color='black', linestyle='-.', label='VNX Threshold')
-    scale = np.array(range(int(5*round(min(vnx_data['Close'])/5)), int(max(max(vnx_data['Close']),vnx_thresh*2+1)), 5))
+    scale = np.array(range(int(5*round(min(vnx_data['Close'])/5)), int(max(max(vnx_data['Close']),round(vnx_thresh*1.75)+1)), 5))
     scale = np.insert(scale, np.where(scale == 5*(round(vnx_thresh/5)+1))[0], vnx_thresh)
     ax2.fill_between(vnx_data.index, np.zeros_like(vnx_data['Close'])+min(scale), vnx_data['Close'],
                      #np.zeros_like(vnx_data['Close',"^VNX"])+min(vnx_data['Close',"^VNX"]), 
@@ -228,9 +228,7 @@ def plot_scraped_data(ticker_data, vnx_data, vnx_thresh, sma_period, ticker_name
     ax2.legend(loc='upper center')
     ax2.set_yticks(scale)
 
-    # Title and grid
     plt.title(f'{ticker_name} Index and VNX Index (Last 2 Years)')
-    #plt.grid(True)
     plt.show()
 
 
@@ -245,8 +243,8 @@ def main(vnx_thresh, sma_period):
     check_signals(nxd100_data, qyld_data, vnx_data, vnx_thresh, sma_period)
 
     # Plot the scraped data
-    plot_scraped_data(nxd100_data, vnx_data, vnx_thresh, sma_period, ticker_name='Nasdaq 100')  #, ticker="^GSPC")
-    plot_scraped_data(qyld_data, vnx_data, vnx_thresh, sma_period, ticker_name='QYLD')  #, ticker="18MF.DE")
+    plot_scraped_data(nxd100_data, vnx_data, vnx_thresh, sma_period, ticker_name='Nasdaq 100')  #, ticker="^NDX")
+    plot_scraped_data(qyld_data, vnx_data, vnx_thresh, sma_period, ticker_name='QYLD')  #, ticker="QYLD")
     
     
 # Run the script
