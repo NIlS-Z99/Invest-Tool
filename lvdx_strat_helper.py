@@ -153,7 +153,7 @@ def plot_scraped_data(ticker_data, sma_period, ticker_name): # ticker="^GDAXI"):
         ((min(ticker_data['Close'])*0.1)//50 + 1)*50 if (min(ticker_data['Close'])*0.1)>10 else ((min(ticker_data['Close'])*0.1)//5 + 1)*5))
     scale = np.array(range(int(adjust_factor*round(min(ticker_data['Close'])/adjust_factor))-adjust_factor, int(max(ticker_data['Close']))+adjust_factor, adjust_factor))
     ax1.fill_between(ticker_data.index, np.zeros_like(ticker_data['Close'])+min(scale), ticker_data['Close'],
-                     #np.zeros_like(ticker_data['Close',ticker])+min(ticker_data['Close',ticker]), 
+                     #np.zeros_like(ticker_data['Close',ticker])+min(scale), 
                      #ticker_data['Close',ticker], 
                      color='cyan', alpha=0.3)
     count = 0
@@ -187,6 +187,5 @@ def main(sma_period):
     
 # Run the script
 if __name__ == "__main__":
-    if len(argv)>1: V1X_THRESHOLD = int(argv[1])
-    if len(argv)>2: SMA_PERIOD = int(argv[2])
-    main(V1X_THRESHOLD,SMA_PERIOD)
+    if len(argv)>1: SMA_PERIOD = int(argv[1])
+    main(SMA_PERIOD)

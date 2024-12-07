@@ -169,7 +169,7 @@ def check_signals(sp500_data, amumbo_data, vix_data, vix_thresh, sma_period):
     elif below_amumbo_sma150:
         print("WARNING: Amumbo is below SMA150. Market trend is very bearish. Move 50% or at least Gains into ACWI IMI!")
     elif below_amumbo_smaq:
-        print("WARNING: Amumbo is below SMAq. Market trend is bearish. Move 25% or at least 50% Gains into ACWI IMI!")
+        print("WARNING: Amumbo is below SMAq. Market trend is bearish. Move 25% or at least 50% Gains into USA ESG!")
     elif below_amumbo_sma50:
         print("WARNING: Amumbo is below SMA50. Market trend is slightly bearish. Stop saving plan!")    
     elif True in below_amumbo_sma:
@@ -191,7 +191,7 @@ def plot_scraped_data(ticker_data, vix_data, vix_thresh, sma_period, ticker_name
         ((min(ticker_data['Close'])*0.1)//50 + 1)*50 if (min(ticker_data['Close'])*0.1)>10 else ((min(ticker_data['Close'])*0.1)//5 + 1)*5))
     scale = np.array(range(int(adjust_factor*round(min(ticker_data['Close'])/adjust_factor))-adjust_factor, int(max(ticker_data['Close']))+adjust_factor, adjust_factor))
     ax1.fill_between(ticker_data.index, np.zeros_like(ticker_data['Close'])+min(scale), ticker_data['Close'],
-                     #np.zeros_like(ticker_data['Close',ticker])+min(ticker_data['Close',ticker]), 
+                     #np.zeros_like(ticker_data['Close',ticker])+min(scale), 
                      #ticker_data['Close',ticker], 
                      color='cyan', alpha=0.3)
     count = 0
@@ -219,7 +219,7 @@ def plot_scraped_data(ticker_data, vix_data, vix_thresh, sma_period, ticker_name
     scale = np.array(range(int(5*round(min(vix_data['Close'])/5)), int(max(max(vix_data['Close']),vix_thresh*2+1)), 5))
     scale = np.insert(scale, np.where(scale == 5*(round(vix_thresh/5)+1))[0], vix_thresh)
     ax2.fill_between(vix_data.index, np.zeros_like(vix_data['Close'])+min(scale), vix_data['Close'],
-                     #np.zeros_like(vix_data['Close',"^VIX"])+min(vix_data['Close',"^VIX"]), 
+                     #np.zeros_like(vix_data['Close',"^VIX"])+min(scale), 
                      #vix_data['Close',"^VIX"], 
                      color='lime', alpha=0.3)
     #ax2.fill_between(vix_data[vix_data['Close',"^VIX"]>vix_thresh].index, np.zeros_like(vix_data[vix_data['Close',"^VIX"]>vix_thresh]['Close',"^VIX"])+vix_thresh, vix_data[vix_data['Close',"^VIX"]>vix_thresh]['Close',"^VIX"], color='crimson', alpha=0.3)
